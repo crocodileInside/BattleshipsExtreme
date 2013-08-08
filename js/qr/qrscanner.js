@@ -59,7 +59,23 @@ function QRScanner(videoTagName)
 	this.qrDetected = function(data)
 	{
 		that.stopScan();
-	
+		
+		var qrReg = /(BS([0-9]{2})([0-9]{4}))([a-zA-Z0-9]{40})/g
+		qrReg.exec(data);
+		if(RegExp.$1 && RegExp.$2 && RegExp.$3 && RegExp.$4)
+		{
+			if(CryptoJS.SHA1(RegExp.$1) = RegExp.$4)
+			{
+				var cType = parseInt(RegExp.$2);
+				var cID = parseInt(RegExp.$3);
+				
+				console.log("Card Valid");
+				console.log(cType);
+				console.log(cID);
+			}
+		}
+		// (BS[0-9]{6})([a-zA-Z0-9]{40})
+		
 		console.log(data);
 		console.log(crc32(data));
 		

@@ -25,7 +25,8 @@
 		<script type="text/javascript" src="js/qr/qrscanner.js"></script>
 		
 		<script type="text/javascript" src="js/CardDatabase.js"></script>
-		<script type="text/javascript" src="js/ClientMain.js"></script>
+		<!--<script type="text/javascript" src="js/ClientMain.js"></script>-->
+		
 		<script type="text/javascript">
 			var qr;
 			$(document).ready(function() {

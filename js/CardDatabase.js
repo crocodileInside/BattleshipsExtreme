@@ -5,7 +5,7 @@ var cardTypes = [ {cardName: "Schuss", cardCooldown: 1, cardImage: "schuss.png",
 {cardName: "Schild", cardCooldown: 2, cardImage: "schild.png", cardDescription: "Schützt ein beliebiges Feld vor einem Schuss."}, 
 {cardName: "Schiff neu bauen", cardCooldown: 2, cardImage: "rebuild.png", cardDescription: "Baut ein zerstörtes Schiff komplett wieder auf"}, 
 {cardName: "Schiff reparieren", cardCooldown: 2, cardImage: "repair.png", cardDescription: "Repariert ein beschädigtes Schiff komplett"}, 
-{cardName: "Spion befragen", cardCooldown: 2, cardImage: "spion_frage.png", cardDescription: "Der Spion liefert euch eine nützliche Position."}, 
+{cardName: "Spion befragen", cardCooldown: 2, cardImage: "spion_fragen.png", cardDescription: "Der Spion liefert euch eine nützliche Position."}, 
 {cardName: "Spion zurückholen", cardCooldown: 2, cardImage: "spion_holen.png", cardDescription: "Trefft euch mit dem Spion und befragt ihn ausführlich."}, 
  ];
 
@@ -25,8 +25,13 @@ var cardIndexCounter = 0;
 function generateCardQRString(cardType, cardID)
 {
 	var strQR = "BS" + cardType.toString().lpad("0", 2) + cardID.toString().lpad("0", 4);
-	strQR = strQR + crc32(strQR);
+	strQR = strQR + CryptoJS.SHA1(strQR).toString();
 	return strQR;
+}
+
+function generateCardQRURL(data)
+{
+	return "https://chart.googleapis.com/chart?cht=qr&chld=M&chs=400x400&chl="+data;
 }
 
 function addCardsToDB(cType, num)
