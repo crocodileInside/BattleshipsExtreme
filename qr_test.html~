@@ -3,6 +3,7 @@
 		<title>WebQR Test</title>
 		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui.js"></script>
+		
 		<script type="text/javascript" src="js/qr/grid.js"></script>
 		<script type="text/javascript" src="js/qr/version.js"></script>
 		<script type="text/javascript" src="js/qr/detector.js"></script>
@@ -19,8 +20,12 @@
 		<script type="text/javascript" src="js/qr/qrcode.js"></script>
 		<script type="text/javascript" src="js/qr/findpat.js"></script>
 		<script type="text/javascript" src="js/qr/alignpat.js"></script>
-		<script type="text/javascript" src="js/qr/databr.js"></script>		
+		<script type="text/javascript" src="js/qr/databr.js"></script>
+		<script type="text/javascript" src="js/qr/crc32.js"></script>
 		<script type="text/javascript" src="js/qr/qrscanner.js"></script>
+		
+		<script type="text/javascript" src="js/CardDatabase.js"></script>
+		<script type="text/javascript" src="js/ClientMain.js"></script>
 		<script type="text/javascript">
 			var qr;
 			$(document).ready(function() {
