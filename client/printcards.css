@@ -1,3 +1,5 @@
+@page { size : landscape }
+
 body
 {
 	width: 297mm;
@@ -6,7 +8,8 @@ body
 div#printCardContainer div:nth-child(6n)
 {
 	page-break-after: always;
-	background-color: #0F0;
+	page-break-inside: avoid;
+	-webkit-region-break-inside: avoid;
 }
 
 div.printCardFrame
