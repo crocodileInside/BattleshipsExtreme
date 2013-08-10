@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 	<head>
 		<title>WebQR Test</title>
+		
+		<meta charset="utf-8">
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+		
+		<link rel="stylesheet" type="text/css" href="printcards.css">
+		
 		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui.js"></script>
 		
@@ -21,7 +27,7 @@
 		<script type="text/javascript" src="js/qr/findpat.js"></script>
 		<script type="text/javascript" src="js/qr/alignpat.js"></script>
 		<script type="text/javascript" src="js/qr/databr.js"></script>
-		<script type="text/javascript" src="js/qr/crc32.js"></script>
+		<script type="text/javascript" src="js/qr/sha1.js"></script>
 		<script type="text/javascript" src="js/qr/qrscanner.js"></script>
 		
 		<script type="text/javascript" src="js/CardDatabase.js"></script>
@@ -42,5 +48,6 @@
 		<video id="scanVideoFrame" autoplay></video>
 		<div id="result"></div>
 		<canvas id="qr-canvas"></canvas>
+		<div class="printCardContainer"></div>
 	</body>
 </html>

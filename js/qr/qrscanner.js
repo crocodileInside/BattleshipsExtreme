@@ -64,20 +64,22 @@ function QRScanner(videoTagName)
 		qrReg.exec(data);
 		if(RegExp.$1 && RegExp.$2 && RegExp.$3 && RegExp.$4)
 		{
-			if(CryptoJS.SHA1(RegExp.$1) = RegExp.$4)
+			if(CryptoJS.SHA1(RegExp.$1) == RegExp.$4)
 			{
 				var cType = parseInt(RegExp.$2);
 				var cID = parseInt(RegExp.$3);
 				
 				console.log("Card Valid");
-				console.log(cType);
-				console.log(cID);
+				console.log("Card type: " + cType);
+				console.log("Card ID: " + cID);
+			}else
+			{
+				console.log("Card Invalid!");
 			}
 		}
 		// (BS[0-9]{6})([a-zA-Z0-9]{40})
 		
 		console.log(data);
-		console.log(crc32(data));
 		
 	};
 	
