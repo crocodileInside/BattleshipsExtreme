@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 	<head>
-		<title>Schiffe Versenken Extreme Kartengenerator</title>
+		<title>Schiffe Versenken Extreme</title>
 		
 		<meta charset="utf-8">
 		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 		
-		<link rel="stylesheet" type="text/css" href="printcards.css">
+		<link rel="stylesheet" type="text/css" href="main.css">
 		
 		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui.js"></script>
 		<script type="text/javascript" src="js/qr/sha1.js"></script>
 		<script type="text/javascript" src="js/CardDatabase.js"></script>
+		<script type="text/javascript" src="js/ClientMain.js"></script>
+		
 		<script type="text/javascript">
 			$(document).ready(function() {
-				$("#btnGenCards").click(function(){
-					$(this).remove();
-					generateCardDB();
-					printCardDB();
-				});
+				
 			});
 		</script>
 	</head>
 	
 	<body>
-		<button id="btnGenCards">Karten generieren</button>
-		<div id="printCardContainer"></div>
+		
 	</body>
 </html>

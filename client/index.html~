@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+	<head>
+		<title>Schiffe Versenken Extreme</title>
+		
+		<meta charset="utf-8">
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+		
+		<link rel="stylesheet" type="text/css" href="main.css">
+		
+		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/qr/sha1.js"></script>
+		<script type="text/javascript" src="js/CardDatabase.js"></script>
+		<script type="text/javascript" src="js/qr/qrscanner.js"></script>
+		<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+		
+		<script type="text/javascript">
+			// Client
+			
+			var fbref = new Firebase('https://battleships.firebaseio.com/');
+			var clientID = 0;	
+			var myCards = Array();
+			
+			
+			fbref.on('child_added', function(snapshot) {
+				var message = snapshot.val();
+				parseMessage(message);
+			});
+			
+			
+			function parseMessage()
+			{
+				if(message.action)
+				{
+					switch(message.action)
+					{
+						case 'clientInit':
+							if(!message.error){
+								clientID = message.clientID;
+								$('div#preparationContainer').show();
+							}else{
+								console.log(message.error);
+							}
+						break;
+						
+						case 'clientReady':
+							
+						break;
+						
+						case 'getCard':
+							
+						break;
+					}
+				}
+			}
+			
+			function pushMessage(msg)
+			{
+				fbref.push(msg);
+			}
+			
+			function generateField()
+			{
+				for(var y = 0; y < 10; y++)
+				{
+					for(var x = 0; x < 12; x++)
+					{
+						$('div#gameField').append($('<div />').attr('id', 'field-'+x+'-'+y));
+					}
+				}
+				
+				$('div#gameField div').click(function(){
+					var strArr = $(this).attr('id').split('-');
+					var x = strArr[1];
+					var y = strArr[2];
+					
+					console.log("x: " + x + "  Y: " + y);
+				});
+			}
+			
+			
+			function addCard(card)
+			{
+				var cType = cardTypes[card.cardType];
+				myCards.push(card);
+				$('div#cardContainer').append($('<div />').addClass('cardItem').prepend($('<img>').attr('src', 'img/'+cType.cardImage)).html(cType.cardName));
+			}
+			
+			$('#messageInput').keypress(function (e) {
+				if (e.keyCode == 13) {
+				var name = $('#nameInput').val();
+				var text = $('#messageInput').val();
+				fbref.push({name: name, text: text});
+				$('#messageInput').val('');
+				}
+			});
+			
+			
+			function displayChatMessage(name, text) {
+				$('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+			};
+		
+		
+			$(document).ready(function() {
+				generateField();
+				
+				$('#btnScanCard').click(function(){
+					
+				});
+			});
+		</script>
+	</head>
+	
+	<body>
+		<div id="preparationContainer">
+			<div id="gameField"></div>
+			<div id="shipContainer"></div>
+		</div>
+		
+		<div id="gameContainer">
+			<div id="cardContainer">
+			</div>
+			
+			<div id="chatContainer"></div>
+			
+			<div id="scanContainer">
+				<button id="btnScanCard">Karte Scannen</button>
+				<video id="scanVideoFrame" autoplay></video>
+				<canvas id="qr-canvas"></canvas>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,97 @@
+body
+{
+	font-family: sans-serif;
+	font-size: 14px;
+	color: #000;
+	background-color: #DDF;
+	
+}
+
+div#cardContainer
+{
+	width: 100%;
+	height: 200px;
+	background-color: #BBF;
+	border: 1px solid #CCC;
+}
+
+div#chatContainer
+{
+	width: 600px;
+	height: 400px;
+	float: left;
+	background-color: #EEF;
+	border: 1px solid #CCC;
+}
+
+div#scanContainer
+{
+	width: 450px;
+	height: 400px;
+	float: left;
+	border: 1px solid #CCC;
+}
+
+div.cardItem
+{
+	height: 170px;
+	width: 120px;
+	background-color: #EEE;
+	font-size: 16px;
+	text-align: center;
+	float: left;
+	margin: 8px;
+	border: 1px solid #CCC;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+div.cardItem img
+{
+	width: 120px;
+}
+
+canvas#qr-canvas
+{
+	display: none;
+}
+
+
+div#preparationContainer
+{
+	
+	
+	
+}
+
+div#gameContainer
+{
+	display: none;
+	
+}
+
+
+div#gameField
+{
+	width: 480px;
+	height: 400px;
+	background-color: #99F;
+}
+
+div#gameField div 
+{
+	width: 38px;
+	height: 38px;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #DDF;
+	float:left;
+	background-color: #99F;
+	cursor: crosshair;
+}
+
+div#gameField div:hover
+{
+	background-color: #CCF;
+}

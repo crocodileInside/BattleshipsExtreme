@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+	<head>
+		<title>Schiffe Versenken Extreme</title>
+		
+		<meta charset="utf-8">
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+		
+		<link rel="stylesheet" type="text/css" href="main.css">
+		
+		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/qr/sha1.js"></script>
+		<script type="text/javascript" src="js/CardDatabase.js"></script>
+		<scritp type="text/javascript" src="js/qr/qrscanner.js"></script>
+		<!--<script type="text/javascript" src="js/ClientMain.js"></script>-->
+		<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+		
+		<script type="text/javascript">
+			// Commander
+			var fbref = new Firebase('https://battleships.firebaseio.com/');
+			
+			var clients = Array();
+			
+			function initMessage()
+			{
+				fbref.push({action:'clientInit'});
+			}
+			
+			function pushMessage(msg)
+			{
+				fbref.push(msg);
+			}
+			
+			fbref.on('child_added', function(snapshot) {
+				var message = snapshot.val();
+				parseMessage(message);
+			});
+			
+			
+			function parseMessage()
+			{
+				if(message.action)
+				{
+					switch(message.action)
+					{
+						case 'clientInit':	
+							if(clients.length < 2)
+							{
+								pushMessage({action: 'clientInit', clientID: clients.length+1});
+								clients.push({clientStatus: 1, clientName: '', clientShips: {} });
+							}else
+							{
+								pushMessage({action: 'clientInit', error: "Server full"});
+							}
+						break;
+						
+						case 'clientReady':
+							clients[message.clientID - 1].clientStatus = 2;
+							clients[message.clientID - 1].clientName = message.clientName;
+							clients[message.clientID - 1].clientShips = message.clientShips;
+						break;
+					}
+				}
+			}
+			
+			
+			$('#messageInput').keypress(function (e) {
+				if (e.keyCode == 13) {
+				var name = $('#nameInput').val();
+				var text = $('#messageInput').val();
+				fbref.push({name: name, text: text});
+				$('#messageInput').val('');
+				}
+			});
+			
+			
+			function displayChatMessage(name, text) {
+				$('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+			};
+		
+		
+			$(document).ready(function() {
+				$("#btnScanCard").click(function(){
+					
+				});
+			});
+		</script>
+	</head>
+	
+	<body>
+		<div id="preparationContainer">
+			<div id="gameField">
+			
+			</div>
+		</div>
+		
+		<div id="gameContainer">
+			<div id="cardContainer">
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
+			</div>
+			
+			<div id="chatContainer"></div>
+			
+			<div id="scanContainer">
+				<button id="btnScanCard">Karte Scannen</button>
+				<video id="scanVideoFrame" autoplay></video>
+				<canvas id="qr-canvas"></canvas>
+			</div>
+		</div>
+	</body>
+</html>
