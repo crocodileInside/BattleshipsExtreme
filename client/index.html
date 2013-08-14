@@ -17,18 +17,21 @@
 		<script type="text/javascript">
 			// Client
 			
-			var fbref = new Firebase('https://battleships.firebaseio.com/');
-			var clientID = 0;	
+			var fbref = new Firebase('https://battleships.firebaseio.com/cc/');
+			
+			var clientID = -1;
+			var clientName = "";
 			var myCards = Array();
+			var myShips = Array();
 			
 			
 			fbref.on('child_added', function(snapshot) {
 				var message = snapshot.val();
-				parseMessage(message);
-			});
+				if(message)
+					parseMessage(message);
+			});	
 			
-			
-			function parseMessage()
+			function parseMessage(message)
 			{
 				if(message.action)
 				{
@@ -38,17 +41,25 @@
 							if(!message.error){
 								clientID = message.clientID;
 								$('div#preparationContainer').show();
+								addChatText('system', 'Client initialized!');
 							}else{
+								addChatText('error', 'Error: ' + message.error);
 								console.log(message.error);
 							}
 						break;
 						
 						case 'clientReady':
-							
+							addChatText('system', 'We are ready, waiting for other players...');
+						break;
+						
+						case 'gameStart':
+							addChatText('system', 'Game started!');
+							$('div#gameContainer').show();
 						break;
 						
 						case 'getCard':
-							
+							addChatText('system', 'Das Team hat eine Karte bekommen!');
+							addCard(message.card);
 						break;
 					}
 				}
@@ -58,6 +69,7 @@
 			{
 				fbref.push(msg);
 			}
+			
 			
 			function generateField()
 			{
@@ -71,13 +83,87 @@
 				
 				$('div#gameField div').click(function(){
 					var strArr = $(this).attr('id').split('-');
-					var x = strArr[1];
-					var y = strArr[2];
+					var x = parseInt(strArr[1]);
+					var y = parseInt(strArr[2]);
 					
-					console.log("x: " + x + "  Y: " + y);
+					console.log("clicked on x: " + x + "  Y: " + y);
+					setShip(x, y, 3, 0);
 				});
 			}
 			
+			
+			function setShip(x, y, len, rotated)
+			{
+				var tmpShipFields = Array();
+				for(var n = 0; n < len; n++)
+				{
+					if(rotated)
+					{
+						tmpShipFields.push([x, y+n]);
+					}
+					else
+					{
+						tmpShipFields.push([x+n, y]);
+					}
+				}	
+				
+				var shipCollision = false;
+				for(var i = 0; i < myShips.length; i++)
+				{
+					var intersection = arr_intersect(myShips[i].fields, tmpShipFields);
+					if(intersection && intersection.length > 0)
+					{
+						shipCollision = true;
+						console.log("intersection");
+					}
+				}
+				
+				if(!shipCollision)
+				{
+					console.log("ok");
+					myShips.push({length: len, rotated: rotated, fields: tmpShipFields});
+					drawShips();
+				}
+				else
+				{
+					addChatText('error', 'Das Schiff kann hier nicht gesetzt werden!');
+				}
+			}
+			
+			function drawShips()
+			{
+				for(var i = 0; i < myShips.length; i++)
+				{
+					for(n = 0; n < myShips[i].fields.length; n++)
+					{
+						$('div#gameField div#field-'+myShips[i].fields[n][0]+'-'+myShips[i].fields[n][1]).addClass('ship');
+					}
+				}
+			}
+			
+			function arr_intersect(a, b)
+			{
+				var ai=0, bi=0;
+				var result = new Array();
+				
+				while( ai < a.length && bi < b.length )
+				{
+					if      (a[ai] < b[bi] ){ ai++; }
+					else if (a[ai] > b[bi] ){ bi++; }
+					else /* they're equal */
+					{
+						result.push(a[ai]);
+						ai++;
+						bi++;
+					}
+				}
+				
+				return result;
+			}
+			
+			function safe_tags(str) {
+				return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+			}
 			
 			function addCard(card)
 			{
@@ -100,10 +186,35 @@
 				$('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 			};
+			
+			function addChatText(type, str)
+			{
+				$('div#chatContainer').append($('<div />').addClass(type).text(str));
+			}
 		
+			function setStatusText(str)
+			{
+				$('div#statusBar').text(str);
+			}
 		
 			$(document).ready(function() {
 				generateField();
+				
+				addChatText('system', 'Client init');
+				
+				fbref.child('handshake').set('clientInit');
+				
+				$('#btnStartGame').click(function(){
+					clientName = safe_tags($('input#teamName').val());
+					if(clientName != '' && myShips.length == 5){
+						pushMessage({clientID: clientID, action: 'clientReady', clientName: clientName, clientShips: myShips});
+						$('div#preparationContainer').hide();
+						addChatText('system', 'Waiting for server...');
+					}else
+					{
+						addChatText('error', 'Noch nicht alle Schiffe gesetzt oder noch kein Teamname gewählt');
+					}
+				});
 				
 				$('#btnScanCard').click(function(){
 					
@@ -116,6 +227,8 @@
 		<div id="preparationContainer">
 			<div id="gameField"></div>
 			<div id="shipContainer"></div>
+			<input type="text" id="teamName" placeholder="Teamname">
+			<button id="btnStartGame">Bereit</button>
 		</div>
 		
 		<div id="gameContainer">

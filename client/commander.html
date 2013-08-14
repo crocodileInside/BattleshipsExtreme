@@ -11,20 +11,16 @@
 		<script type="text/javascript" src="js/jquery-ui.js"></script>
 		<script type="text/javascript" src="js/qr/sha1.js"></script>
 		<script type="text/javascript" src="js/CardDatabase.js"></script>
-		<scritp type="text/javascript" src="js/qr/qrscanner.js"></script>
+		<script type="text/javascript" src="js/qr/qrscanner.js"></script>
 		<!--<script type="text/javascript" src="js/ClientMain.js"></script>-->
 		<script src='https://cdn.firebase.com/v0/firebase.js'></script>
 		
 		<script type="text/javascript">
 			// Commander
-			var fbref = new Firebase('https://battleships.firebaseio.com/');
+			var fbref = new Firebase('https://battleships.firebaseio.com/cc/');
 			
-			var clients = Array();
+			var clients = new Array();
 			
-			function initMessage()
-			{
-				fbref.push({action:'clientInit'});
-			}
 			
 			function pushMessage(msg)
 			{
@@ -32,33 +28,42 @@
 			}
 			
 			fbref.on('child_added', function(snapshot) {
-				var message = snapshot.val();
-				parseMessage(message);
+				parseMessage(snapshot);
 			});
 			
 			
-			function parseMessage()
+			function parseMessage(snapshot)
 			{
-				if(message.action)
+				var message = snapshot.val();
+				
+				if(message == 'clientInit')
+				{
+					console.log('got handshake request');
+					if(clients.length < 2)
+					{
+						pushMessage({action: 'clientInit', clientID: clients.length});
+						clients.push({clientStatus: 1, clientName: '', clientShips: {} });
+						$('div#clientStatus' + clients.length).text('Connected');
+					}else
+					{
+						pushMessage({action: 'clientInit', error: 'Server full'});
+					}
+					
+				}else if(message.action)
 				{
 					switch(message.action)
 					{
-						case 'clientInit':	
-							if(clients.length < 2)
-							{
-								pushMessage({action: 'clientInit', clientID: clients.length+1});
-								clients.push({clientStatus: 1, clientName: '', clientShips: {} });
-							}else
-							{
-								pushMessage({action: 'clientInit', error: "Server full"});
-							}
+						case 'clientReady':
+							var clientID = message.clientID;
+							this.clients[clientID].clientStatus = 2;
+							this.clients[clientID].clientName = message.clientName;
+							this.clients[clientID].clientShips = message.clientShips;
+							
+							setTimeout(function(){ pushMessage({clientID: clientID, action: 'gameReady'}); }, 1);
+							$('div#clientStatus' +  clientID).text('Ready');
 						break;
 						
-						case 'clientReady':
-							clients[message.clientID - 1].clientStatus = 2;
-							clients[message.clientID - 1].clientName = message.clientName;
-							clients[message.clientID - 1].clientShips = message.clientShips;
-						break;
+						
 						
 						
 						
@@ -84,9 +89,8 @@
 		
 		
 			$(document).ready(function() {
-				$("#btnScanCard").click(function(){
-					
-				});
+				fbref.remove();
+				
 			});
 		</script>
 	</head>
@@ -99,6 +103,11 @@
 		</div>
 		
 		<div id="gameContainer">
+			<div id="clientStatusContainer">
+				<div id="clientStatus0">Not connected</div>
+				<div id="clientStatus1">Not connected</div>
+			</div>
+			
 			<div id="cardContainer">
 				<div class="cardItem"><img src="img/schuss.png">Schuss</div>
 				<div class="cardItem"><img src="img/schuss.png">Schuss</div>

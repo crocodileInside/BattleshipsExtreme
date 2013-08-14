@@ -13,6 +13,7 @@ div#cardContainer
 	height: 200px;
 	background-color: #BBF;
 	border: 1px solid #CCC;
+	overflow: auto;
 }
 
 div#chatContainer
@@ -60,8 +61,7 @@ canvas#qr-canvas
 
 div#preparationContainer
 {
-	
-	
+	display: none;
 	
 }
 
@@ -89,9 +89,14 @@ div#gameField div
 	float:left;
 	background-color: #99F;
 	cursor: crosshair;
-}
+} 
 
 div#gameField div:hover
 {
 	background-color: #CCF;
+}
+
+div#gameField div.ship
+{
+	background-color: #333;
 }

@@ -7,12 +7,23 @@ body
 	
 }
 
+div#statusBar
+{
+	background-color: #333;
+	color: #FFF;
+	padding: 2px;
+	text-align: center;
+	width: 100%;
+	height: 20px;
+}
+
 div#cardContainer
 {
 	width: 100%;
 	height: 200px;
 	background-color: #BBF;
 	border: 1px solid #CCC;
+	overflow: auto;
 }
 
 div#chatContainer
@@ -88,9 +99,14 @@ div#gameField div
 	float:left;
 	background-color: #99F;
 	cursor: crosshair;
-}
+} 
 
 div#gameField div:hover
 {
 	background-color: #CCF;
+}
+
+div#gameField div.ship
+{
+	background-color: #333;
 }
