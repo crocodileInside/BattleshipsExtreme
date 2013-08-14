@@ -1,13 +1,14 @@
 
 
 
-function QRScanner(videoTagName)
+function QRScanner(videoTagName, cDetected)
 {	
 	var m_video = null;
 	var m_canvas = null;
 	var m_gctx = null;
 	var m_scan_active = false;
 	var m_imageData = null;
+	var callbackDetected = cDetected;
 	var that = this;
 	
 	this.mediaSuccess = function(stream)
@@ -36,13 +37,13 @@ function QRScanner(videoTagName)
 			try{
 				qrcode.decode();
 			}
-			catch(e){       
+			catch(e){
 				console.log(e);
 				if(m_scan_active)
 					setTimeout(function(thisObj){ thisObj.captureToCanvas(); }, 500, that);
 			};
 		}
-		catch(e){       
+		catch(e){
 			console.log(e);
 			if(m_scan_active)
 				setTimeout(function(thisObj){ thisObj.captureToCanvas(); }, 500, that);
@@ -72,6 +73,7 @@ function QRScanner(videoTagName)
 				console.log("Card Valid");
 				console.log("Card type: " + cType);
 				console.log("Card ID: " + cID);
+				callbackDetected(cType, cID);
 			}else
 			{
 				console.log("Card Invalid!");

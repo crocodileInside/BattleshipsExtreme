@@ -26,6 +26,16 @@ div#cardContainer
 	overflow: auto;
 }
 
+div.cardContainerSmall
+{
+	width: 49%;
+	height: 200px;
+	background-color: #BBF;
+	border: 1px solid #CCC;
+	overflow: auto;
+	float: left;
+}
+
 div#chatContainer
 {
 	width: 600px;
@@ -81,6 +91,50 @@ div#gameContainer
 	
 }
 
+div.over{
+	background-color: #0F0 !important;
+}
+
+div#gameField0
+{
+	width: 480px;
+	height: 400px;
+	background-color: #99F;
+}
+
+div#gameField1
+{
+	width: 480px;
+	height: 400px;
+	background-color: #99F;
+}
+
+div.gameFieldItem
+{
+	width: 38px;
+	height: 38px;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #DDF;
+	float:left;
+	background-color: #99F;
+	cursor: crosshair;
+}
+
+div.ship
+{
+	background-color: #666;
+}
+
+div.hit
+{
+	background-color: #F60;
+}
+
+div.shield
+{
+	background-color: #640;
+}
 
 div#gameField
 {
@@ -109,4 +163,25 @@ div#gameField div:hover
 div#gameField div.ship
 {
 	background-color: #333;
+}
+
+div#gameFieldContainer > div
+{
+	float: left;
+	margin-left: 10px;
+}
+
+div#clientStatus
+{
+	font-weight: normal;
+}
+
+div#clientStatus
+{
+	font-weight: bold;
+}
+
+div#controlContainer
+{
+	clear: both;
 }

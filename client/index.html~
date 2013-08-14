@@ -9,9 +9,28 @@
 		
 		<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui.js"></script>
-		<script type="text/javascript" src="js/qr/sha1.js"></script>
+		
+		<script type="text/javascript" src="js/qr/grid.js"></script>
+		<script type="text/javascript" src="js/qr/version.js"></script>
+		<script type="text/javascript" src="js/qr/detector.js"></script>
+		<script type="text/javascript" src="js/qr/formatinf.js"></script>
+		<script type="text/javascript" src="js/qr/errorlevel.js"></script>
+		<script type="text/javascript" src="js/qr/bitmat.js"></script>
+		<script type="text/javascript" src="js/qr/datablock.js"></script>
+		<script type="text/javascript" src="js/qr/bmparser.js"></script>
+		<script type="text/javascript" src="js/qr/datamask.js"></script>
+		<script type="text/javascript" src="js/qr/rsdecoder.js"></script>
+		<script type="text/javascript" src="js/qr/gf256poly.js"></script>
+		<script type="text/javascript" src="js/qr/gf256.js"></script>
+		<script type="text/javascript" src="js/qr/decoder.js"></script>
+		<script type="text/javascript" src="js/qr/qrcode.js"></script>
+		<script type="text/javascript" src="js/qr/findpat.js"></script>
+		<script type="text/javascript" src="js/qr/alignpat.js"></script>
+		<script type="text/javascript" src="js/qr/databr.js"></script>
+		<script type="text/javascript" src="js/qr/sha1.js"></script>	
 		<script type="text/javascript" src="js/CardDatabase.js"></script>
 		<script type="text/javascript" src="js/qr/qrscanner.js"></script>
+		
 		<script src='https://cdn.firebase.com/v0/firebase.js'></script>
 		
 		<script type="text/javascript">
@@ -19,10 +38,15 @@
 			
 			var fbref = new Firebase('https://battleships.firebaseio.com/cc/');
 			
-			var clientID = -1;	
+			var handshakeToken = Math.floor((Math.random()*1000)+1);
+			
+			var clientID = -1;
 			var clientName = "";
 			var myCards = Array();
+			var scannedCards = Array();
 			var myShips = Array();
+			var gameStarted = false;
+			var qr;
 			
 			
 			fbref.on('child_added', function(snapshot) {
@@ -35,32 +59,47 @@
 			{
 				if(message.action)
 				{
-					switch(message.action)
+					if(message.action == 'clientInit' || message.clientID == clientID)
 					{
-						case 'clientInit':
-							if(!message.error){
-								clientID = message.clientID;
-								$('div#preparationContainer').show();
-								addChatText('system', 'Client initialized!');
-							}else{
-								addChatText('error', 'Error: ' + message.error);
-								console.log(message.error);
-							}
-						break;
-						
-						case 'clientReady':
-							addChatText('system', 'We are ready, waiting for other players...');
-						break;
-						
-						case 'gameStart':
-							addChatText('system', 'Game started!');
-							$('div#gameContainer').show();
-						break;
-						
-						case 'getCard':
-							addChatText('system', 'Das Team hat eine Karte bekommen!');
-							addCard(message.card);
-						break;
+						switch(message.action)
+						{
+							case 'clientInit':
+								if(message.token == handshakeToken)
+								{
+									if(!message.error){
+										clientID = message.clientID;
+										$('div#preparationContainer').show();
+										addChatText('system', 'Client initialized!');
+									}else{
+										addChatText('error', 'Error: ' + message.error);
+										console.log(message.error);
+									}
+								}
+							break;
+							
+							case 'gameReady':
+								addChatText('system', 'We are ready, waiting for other players...');
+							break;
+							
+							case 'gameStart':
+								gameStarted = true;
+								addChatText('system', 'Game started!');
+								$('div#gameContainer').show();
+							break;
+							
+							case 'useCard':
+								
+								addChatText('system', 'Das Team hat ' + cardTypes[message.card.cardType].cardName + 'benutzt');
+								
+								for(var i = 0; i < myCards.length; i++)
+								{
+									if(myCards[i].cardID == message.card.cardID)
+										myCards.splice(i, 1);
+								}
+								
+							break;
+							
+						}
 					}
 				}
 			}
@@ -169,6 +208,7 @@
 			{
 				var cType = cardTypes[card.cardType];
 				myCards.push(card);
+				scannedCards.push(card);
 				$('div#cardContainer').append($('<div />').addClass('cardItem').prepend($('<img>').attr('src', 'img/'+cType.cardImage)).append(cType.cardName));
 			}
 			
@@ -196,13 +236,40 @@
 			{
 				$('div#statusBar').text(str);
 			}
-		
+			
+			function cardScanned(cType, cID)
+			{
+				console.log(cType);
+				console.log(cID);
+				var cardExists = false;
+				
+				for(var i = 0; i < scannedCards.length; i++)
+				{
+					if(scannedCards[i].cardID == cID)
+						cardExists = true;
+				}
+				
+				if(!cardExists)
+				{
+					// Todo: Ask server if card already belongs to opponent Team
+					addCard({cardType: cType, cardID: cID,  cardQR: generateCardQRString(cType, cID)});
+				}else
+				{
+					addChatText('error', 'Karte wurde bereits gescannt!');
+				}
+
+			}
+			
 			$(document).ready(function() {
+				qr = new QRScanner("scanVideoFrame", cardScanned);
+				
 				generateField();
 				
 				addChatText('system', 'Client init');
 				
-				fbref.child('handshake').set('clientInit');
+				fbref.child('handshake').remove();
+				fbref.child('handshake').set({action: 'handshake', token: handshakeToken});
+				//pushMessage({action: 'handshake', token: handshakeToken});
 				
 				$('#btnStartGame').click(function(){
 					clientName = safe_tags($('input#teamName').val());
@@ -217,7 +284,10 @@
 				});
 				
 				$('#btnScanCard').click(function(){
-					
+					if(gameStarted)
+					{
+						qr.startScan();
+					}
 				});
 			});
 		</script>
