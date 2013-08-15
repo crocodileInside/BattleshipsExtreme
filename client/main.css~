@@ -7,16 +7,6 @@ body
 	
 }
 
-div#statusBar
-{
-	background-color: #333;
-	color: #FFF;
-	padding: 2px;
-	text-align: center;
-	width: 100%;
-	height: 20px;
-}
-
 div#cardContainer
 {
 	width: 100%;
@@ -24,17 +14,28 @@ div#cardContainer
 	background-color: #BBF;
 	border: 1px solid #CCC;
 	overflow: auto;
+	display: none;
 }
 
 div.cardContainerSmall
 {
-	width: 49%;
+	width: 480px;
 	height: 200px;
 	background-color: #BBF;
 	border: 1px solid #CCC;
 	overflow: auto;
 	float: left;
+	margin-left: 8px;
+	margin-top: 10px;
 }
+
+
+div#preparationContainer
+{
+	display: none;
+	float: left;
+}
+
 
 div#chatContainer
 {
@@ -45,13 +46,26 @@ div#chatContainer
 	border: 1px solid #CCC;
 }
 
+div#chatContainer div.system
+{
+	color: #333;
+}
+
+div#chatContainer div.error
+{
+	color: #F00;
+}
+
+
 div#scanContainer
 {
 	width: 450px;
 	height: 400px;
 	float: left;
 	border: 1px solid #CCC;
+	display: none;
 }
+
 
 div.cardItem
 {
@@ -79,35 +93,39 @@ canvas#qr-canvas
 }
 
 
-div#preparationContainer
+
+div.gameField
 {
-	display: none;
-	
+	width: 480px;
+	height: 400px;
+	background-color: #99F;
 }
 
-div#gameContainer
+div.gameField div:hover
 {
-	display: none;
-	
+	background-color: #CCF;
 }
 
-div.over{
+div.gameField div.over{
 	background-color: #0F0 !important;
 }
 
-div#gameField0
+
+div.gameField div.ship
 {
-	width: 480px;
-	height: 400px;
-	background-color: #99F;
+	background-color: #666;
 }
 
-div#gameField1
+div.gameField div.hit
 {
-	width: 480px;
-	height: 400px;
-	background-color: #99F;
+	background-color: #F60;
 }
+
+div.gameField div.shield
+{
+	background-color: #640;
+}
+
 
 div.gameFieldItem
 {
@@ -119,51 +137,12 @@ div.gameFieldItem
 	float:left;
 	background-color: #99F;
 	cursor: crosshair;
+	color: #CCF;
+	text-align: center;
+	font-size: 16px;
+	line-height: 38px;
 }
 
-div.ship
-{
-	background-color: #666;
-}
-
-div.hit
-{
-	background-color: #F60;
-}
-
-div.shield
-{
-	background-color: #640;
-}
-
-div#gameField
-{
-	width: 480px;
-	height: 400px;
-	background-color: #99F;
-}
-
-div#gameField div 
-{
-	width: 38px;
-	height: 38px;
-	margin: 0px;
-	padding: 0px;
-	border: 1px solid #DDF;
-	float:left;
-	background-color: #99F;
-	cursor: crosshair;
-} 
-
-div#gameField div:hover
-{
-	background-color: #CCF;
-}
-
-div#gameField div.ship
-{
-	background-color: #333;
-}
 
 div#gameFieldContainer > div
 {

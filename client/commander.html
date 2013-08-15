@@ -91,6 +91,9 @@
 				clients[client].clientCards.push(card);
 				$('div#cardContainer'+client).append($('<div />').addClass('cardItem').attr('draggable', 'true').attr('id', 'c-'+client+'-'+card.cardID).prepend($('<img>').attr('src', 'img/'+cType.cardImage).attr('draggable', 'false')).append(cType.cardName)).on('dragstart', function(e){
 					currentDragObject = this;
+					$(this).css('opacity', 0.3);
+				}).on('dragend', function(e){
+					$(this).css('opacity', 1.0);
 				});
 			}
 			
@@ -116,8 +119,8 @@
 				{
 					for(var x = 0; x < 12; x++)
 					{
-						$('div#gameField0').append($('<div />').addClass('gameFieldItem').attr('id', 'field-0-'+x+'-'+y));
-						$('div#gameField1').append($('<div />').addClass('gameFieldItem').attr('id', 'field-1-'+x+'-'+y));
+						$('div#gameField0').append($('<div />').addClass('gameFieldItem').attr('id', 'field-0-'+x+'-'+y).text(String.fromCharCode(65+x) + (y+1)));
+						$('div#gameField1').append($('<div />').addClass('gameFieldItem').attr('id', 'field-1-'+x+'-'+y).text(String.fromCharCode(65+x) + (y+1)));
 					}
 				}
 				
@@ -147,7 +150,9 @@
 					var x = parseInt(strArr[2]);
 					var y = parseInt(strArr[3]);
 					
-					var cType;
+					var strCardArray = $(currentDragObject).attr('id').split('-');
+					var cclID = strCardArray[1];
+					var cID = strCardArray[2];
 					
 					
 					// do the magic here
@@ -268,8 +273,8 @@
 	
 	<body>
 		<div id="gameFieldContainer">
-			<div id="gameField0"></div>
-			<div id="gameField1"></div>
+			<div class="gameField" id="gameField0"></div>
+			<div class="gameField" id="gameField1"></div>
 			<div id="clientStatusContainer">
 				<div id="clientStatus0"></div>
 				<div id="clientStatus1"></div>

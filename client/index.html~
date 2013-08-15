@@ -69,7 +69,7 @@
 									if(!message.error){
 										clientID = message.clientID;
 										$('div#preparationContainer').show();
-										addChatText('system', 'Client initialized!');
+										addChatText('system', 'Client verbunden!');
 									}else{
 										addChatText('error', 'Error: ' + message.error);
 										console.log(message.error);
@@ -78,18 +78,19 @@
 							break;
 							
 							case 'gameReady':
-								addChatText('system', 'We are ready, waiting for other players...');
+								addChatText('system', 'Team bereit, warte auf andere Teams...');
 							break;
 							
 							case 'gameStart':
 								gameStarted = true;
-								addChatText('system', 'Game started!');
-								$('div#gameContainer').show();
+								addChatText('system', 'Spiel gestartet!');
+								$('div#cardContainer').show();
+								$('div#scanContainer').show();
 							break;
 							
 							case 'useCard':
 								
-								addChatText('system', 'Das Team hat ' + cardTypes[message.card.cardType].cardName + 'benutzt');
+								addChatText('system', 'Team hat ' + cardTypes[message.card.cardType].cardName + 'benutzt');
 								
 								for(var i = 0; i < myCards.length; i++)
 								{
@@ -116,7 +117,7 @@
 				{
 					for(var x = 0; x < 12; x++)
 					{
-						$('div#gameField').append($('<div />').attr('id', 'field-'+x+'-'+y));
+						$('div#gameField').append($('<div />').addClass('gameFieldItem').attr('id', 'field-'+x+'-'+y).text(String.fromCharCode(65+x) + y));
 					}
 				}
 				
@@ -159,7 +160,7 @@
 				
 				if(!shipCollision)
 				{
-					console.log("ok");
+					console.log("ship set");
 					myShips.push({length: len, rotated: rotated, fields: tmpShipFields});
 					drawShips();
 				}
@@ -212,7 +213,7 @@
 				$('div#cardContainer').append($('<div />').addClass('cardItem').prepend($('<img>').attr('src', 'img/'+cType.cardImage)).append(cType.cardName));
 			}
 			
-			$('#messageInput').keypress(function (e) {
+			/*$('#messageInput').keypress(function (e) {
 				if (e.keyCode == 13) {
 				var name = $('#nameInput').val();
 				var text = $('#messageInput').val();
@@ -225,7 +226,7 @@
 			function displayChatMessage(name, text) {
 				$('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
-			};
+			};*/
 			
 			function addChatText(type, str)
 			{
@@ -251,11 +252,13 @@
 				
 				if(!cardExists)
 				{
-					// Todo: Ask server if card already belongs to opponent Team
-					addCard({cardType: cType, cardID: cID,  cardQR: generateCardQRString(cType, cID)});
+					// Todo: Ask server if card already belongs to other Team
+					var sCard = {cardType: cType, cardID: cID,  cardQR: generateCardQRString(cType, cID)};
+					addCard(sCard);
+					fbref.push({action: 'addCard', card: sCard, clientID: clientID});
 				}else
 				{
-					addChatText('error', 'Karte wurde bereits gescannt!');
+					addChatText('error', 'Diese Karte wurde bereits gescannt!');
 				}
 
 			}
@@ -265,18 +268,19 @@
 				
 				generateField();
 				
-				addChatText('system', 'Client init');
+				addChatText('system', 'Initialisieren');
 				
+				addChatText('system', 'Warte auf Verbindung...');
 				fbref.child('handshake').remove();
 				fbref.child('handshake').set({action: 'handshake', token: handshakeToken});
-				//pushMessage({action: 'handshake', token: handshakeToken});
+				
 				
 				$('#btnStartGame').click(function(){
 					clientName = safe_tags($('input#teamName').val());
 					if(clientName != '' && myShips.length == 5){
 						pushMessage({clientID: clientID, action: 'clientReady', clientName: clientName, clientShips: myShips});
 						$('div#preparationContainer').hide();
-						addChatText('system', 'Waiting for server...');
+						addChatText('system', 'Warten auf Spielstart...');
 					}else
 					{
 						addChatText('error', 'Noch nicht alle Schiffe gesetzt oder noch kein Teamname gewählt');
@@ -294,24 +298,21 @@
 	</head>
 	
 	<body>
+		<div id="cardContainer"></div>
+		
 		<div id="preparationContainer">
-			<div id="gameField"></div>
+			<div class="gameField" id="gameField"></div>
 			<div id="shipContainer"></div>
 			<input type="text" id="teamName" placeholder="Teamname">
 			<button id="btnStartGame">Bereit</button>
 		</div>
 		
-		<div id="gameContainer">
-			<div id="cardContainer">
-			</div>
-			
-			<div id="chatContainer"></div>
-			
-			<div id="scanContainer">
-				<button id="btnScanCard">Karte Scannen</button>
-				<video id="scanVideoFrame" autoplay></video>
-				<canvas id="qr-canvas"></canvas>
-			</div>
+		<div id="chatContainer"></div>
+		
+		<div id="scanContainer">
+			<button id="btnScanCard">Karte Scannen</button>
+			<video id="scanVideoFrame" autoplay></video>
+			<canvas id="qr-canvas"></canvas>
 		</div>
 	</body>
 </html>
