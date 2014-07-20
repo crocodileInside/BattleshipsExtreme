@@ -104,6 +104,7 @@ function QRScanner(videoTagName, cDetected)
 		m_gctx.clearRect(0, 0, cwidth, cheight);
 		m_imageData = m_gctx.getImageData(0,0,320,240);
 		
+		//http://stackoverflow.com/questions/18625007/enable-rear-camera-with-html5
 		
 		qrcode.callback = this.qrDetected;
 		navigator.getMedia = (navigator.webkitGetUserMedia || navigator.mozGetUserMedia);		
